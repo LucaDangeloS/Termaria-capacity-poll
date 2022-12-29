@@ -1,7 +1,15 @@
 #!/usr/bin/python3
 import ast
 import os
+import sys
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+DEFAULT_DIR = "aforo"
+DEFAULT_PLACE = "Gimnasio"
+STATS_DIR = "statistics"
+X_TICKS = 6
 
 # Convert str dict into each column with each value and remove negative values
 def reformat_dataframe(data):
@@ -25,14 +33,49 @@ def scan_dir(folder="."):
                 total_data = total_data.append(data)
     return total_data
 
-# data = scan_dir()
-# days = data.day.unique().tolist()
-# ax = data[data['day'] =='monday'].groupby(['day','time']).mean()
+def record_histogram(o_data, week_day, place, y_ticks):
+    data = o_data[o_data['day'] == week_day].groupby(['day','time'], as_index = False)
+    idxs = np.round(np.linspace(0, len(data) - 1, X_TICKS)).astype(int)
 
-# fig = ax.get_figure()
-# ax = s.hist(columns=['colA', 'colB'])
-# try one of the following
-# fig = ax[0].get_figure()
-# fig = ax[0][0].get_figure()
+    mean_data = data.mean()
+    median_data = data.median()
 
-# fig.savefig('histogram.png')
+    plt.bar(mean_data['time'], mean_data[place], color='b', width=0.9, label='Mean')
+    plt.bar(median_data['time'], median_data[place], color='tab:orange', width=0.5, label='Median')
+
+    plt.legend()
+    plt.xticks(mean_data.loc[idxs]['time'])
+    plt.yticks(y_ticks)
+    plt.title(f'{week_day.capitalize()} {place.capitalize()}')
+    plt.savefig(f'{STATS_DIR}/histogram_{place}_{week_day}.png')
+    plt.cla()
+    plt.clf()
+
+if __name__ == '__main__':
+    if (len(sys.argv) > 1):
+        try:
+            day = sys.argv[1]
+            comoda = sys.argv[2]
+        except:
+            comoda = sys.argv[1]
+            day = None
+    else:
+        day = None
+        comoda = DEFAULT_PLACE
+
+    dir = DEFAULT_DIR
+    data = scan_dir(dir)
+    
+    tmp = data.groupby(['day','time'], as_index = False)
+    jumps = 20
+    mean_max, median_max = (tmp.mean()[comoda].max(), tmp.median()[comoda].max())
+    y_ticks = np.arange(0, max(mean_max, median_max) + jumps, jumps)
+
+    if day:
+        record_histogram(data, day, comoda, y_ticks)
+        exit()
+
+    if not day:
+        days = data.day.unique().tolist()
+        for d in days:
+            record_histogram(data, d, comoda, y_ticks)

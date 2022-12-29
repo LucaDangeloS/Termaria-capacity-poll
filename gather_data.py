@@ -61,13 +61,13 @@ def time_range(time_init, time_end):
 
 def get_request_data():
     #author: Valonso
-    first_request = requests.get('https://termaria.deporsite.net/ocupacion-aforo')
+    first_request = requests.get(URL)
     # Las devuelve como headers set-cookie la primera request, cada request las cambia, pero no es necesario modificarlas
     valid_cookies = first_request.cookies
     # Se extrae de una tag <meta> de la página y es obligatiorio enviarlo como header en las peticiones
     csrf_token = BeautifulSoup(first_request.text,"html.parser").find("meta",attrs={"name":"csrf-token"})["content"]
 
-    return requests.post('https://termaria.deporsite.net/ajax/TInnova_v2/Listado_OcupacionAforo/llamadaAjax/obtenerOcupacion',headers={"x-csrf-token":csrf_token},cookies=valid_cookies).json()
+    return requests.post(API_URL,headers={"x-csrf-token":csrf_token},cookies=valid_cookies).json()
 
 
 def get_week_n_year():
