@@ -41,7 +41,7 @@ def record_histogram(o_data, week_day, place, y_ticks):
     median_data = data.median()
 
     plt.bar(mean_data['time'], mean_data[place], color='b', width=0.9, label='Mean')
-    plt.bar(median_data['time'], median_data[place], color='tab:orange', width=0.5, label='Median')
+    plt.bar(median_data['time'], median_data[place], color='tab:orange', width=0.5, label='Median', alpha=0.7)
 
     plt.legend()
     plt.xticks(mean_data.loc[idxs]['time'])
@@ -75,7 +75,6 @@ if __name__ == '__main__':
         record_histogram(data, day, comoda, y_ticks)
         exit()
 
-    if not day:
-        days = data.day.unique().tolist()
-        for d in days:
-            record_histogram(data, d, comoda, y_ticks)
+    days = data.day.unique().tolist()
+    for d in days:
+        record_histogram(data, d, comoda, y_ticks)
