@@ -86,7 +86,7 @@ def gather_data(week_day, time):
 
 def write_data(week_day, time, aforos):
     year, week_n = get_week_n_year()
-    with open(f'{aforo_folder}aforo_semana_{week_n}_{year}.csv', 'a+') as csvfile:
+    with open(f'{aforo_folder}aforo_{year}_semana_{week_n}.csv', 'a+') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow([week_day, time, aforos])
 
