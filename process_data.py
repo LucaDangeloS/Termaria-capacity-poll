@@ -22,11 +22,13 @@ def reformat_dataframe(data):
     return data
 
 
-def scan_dir(folder=".", start=0, end=-1, top=-1):
+def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
     total_data = pd.DataFrame()
+    if (end == 0):
+        end = -1
     # walk files in name reverse order
     for root, dirs, files in os.walk(f'{folder}/', topdown=True):
-        files.sort()
+        files.sort(reverse=reverse)
         if start >= 0:
             files = files[start:end]
         if (top >= 0):
@@ -71,7 +73,8 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--day", type=str, default=None, required=False, help="Day of the week")
     parser.add_argument("-p", "--place", type=str, default='Gimnasio', required=False, help="Place to analyze")
     parser.add_argument("-s", "--start", type=int, default=0, required=False, help="Start week")
-    parser.add_argument("-e", "--end", type=int, default=-1, required=False, help="Number of weeks to analyze")
+    parser.add_argument("-e", "--end", type=int, default=0, required=False, help="Number of weeks to analyze")
+    parser.add_argument("-r", "--reverse", action='store_true', help="Reverse order of weeks")
     parser.add_argument("-l", "--latest", type=int, default=-1, required=False, help="Latest weeks to analyze")
     parser.add_argument("-a", "--append", type=str, default="", required=False, help="Append to file name")
     args = parser.parse_args()
@@ -82,7 +85,7 @@ if __name__ == '__main__':
     comoda = args.place
 
     dir = DEFAULT_DIR
-    data = scan_dir(dir, args.start, args.end, args.latest)
+    data = scan_dir(dir, args.start, args.end, args.latest, args.reverse)
     
     tmp = data.groupby(['day','time'], as_index = False)
     jumps = 20

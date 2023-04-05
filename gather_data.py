@@ -72,6 +72,8 @@ def get_request_data():
 
 def get_week_n_year():
     year, week_num, _ = date.today().isocalendar()
+    # Put a leading zero if week_num < 10
+    week_num = "{:02d}".format(week_num)
     return (year, week_num)
 
 def gather_data(week_day, time):
@@ -95,8 +97,6 @@ if __name__ == '__main__':
     for key in timestamps:
         for time in timestamps[key]:
             getattr(schedule.every(), key).at(time).do(gather_data, key, time)
-
-    # print(get_week_n_year())
 
     while True:
         schedule.run_pending()
