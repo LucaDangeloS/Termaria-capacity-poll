@@ -30,7 +30,10 @@ def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
     for root, dirs, files in os.walk(f'{folder}/', topdown=True):
         files.sort(reverse=reverse)
         if start >= 0:
-            files = files[start:end]
+            if end < 0:
+                files = files[start:]
+            else:
+                files = files[start:end]
         if (top >= 0):
             files.sort(reverse=True)
         for file in files:
