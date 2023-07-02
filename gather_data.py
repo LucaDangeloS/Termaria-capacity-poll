@@ -28,7 +28,7 @@ aperture_time = {
                 3: week_aperture_time, 
                 4: week_aperture_time, 
                 5: week_aperture_time, 
-                6: '9:30'
+                6: '9:00'
 }
 time_closing = {
                 0: '15:00', 
