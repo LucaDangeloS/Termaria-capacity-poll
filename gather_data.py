@@ -5,41 +5,12 @@ from time import sleep, time
 from bs4 import BeautifulSoup
 from datetime import timedelta, datetime, date
 import csv
+from app_constants import places, int_weekday, time_closing, aperture_time
 
 interval = timedelta(minutes=15)
-week_aperture_time = '7:30'
-week_closing_time = '22:30'
 aforo_folder = 'aforo/'
 URL = 'https://termaria.deporsite.net/ocupacion-aforo'
 API_URL = 'https://termaria.deporsite.net/ajax/TInnova_v2/Listado_OcupacionAforo/llamadaAjax/obtenerOcupacion'
-int_weekday = {
-    0: 'sunday',
-    1: 'monday',
-    2: 'tuesday',
-    3: 'wednesday',
-    4: 'thursday',
-    5: 'friday',
-    6: 'saturday'
-}
-aperture_time = {
-                0: '9:30', 
-                1: week_aperture_time, 
-                2: week_aperture_time, 
-                3: week_aperture_time, 
-                4: week_aperture_time, 
-                5: week_aperture_time, 
-                6: '9:00'
-}
-time_closing = {
-                0: '15:00', 
-                1: week_closing_time, 
-                2: week_closing_time, 
-                3: week_closing_time, 
-                4: week_closing_time, 
-                5: week_closing_time, 
-                6: '21:00'
-}
-places = {'Talaso': 4, 'Gimnasio': 15, 'Fan Interior': 16}
 
 
 def ct(time):
