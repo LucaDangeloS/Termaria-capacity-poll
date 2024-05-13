@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import timedelta, datetime, date
 import csv
 
-interval = timedelta(minutes=30)
+interval = timedelta(minutes=15)
 week_aperture_time = '7:30'
 week_closing_time = '22:30'
 aforo_folder = 'aforo/'
