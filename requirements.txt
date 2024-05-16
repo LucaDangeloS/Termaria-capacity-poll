@@ -4,3 +4,5 @@ pandas
 schedule
 beautifulsoup4
 matplotlib
+streamlit-vega-lite
+
