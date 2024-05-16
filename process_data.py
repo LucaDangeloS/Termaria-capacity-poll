@@ -6,21 +6,68 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse as ap
+import datetime
+from app_constants import int_weekday
 
 DEFAULT_DIR = "aforo"
 DEFAULT_PLACE = "Gimnasio"
 STATS_DIR = "statistics"
 X_TICKS = 6
 
+def get_key(dict, val):
+    return next(
+        (key for key, value in dict.items() if val == value),
+        "key doesn't exist",
+    )
+
 # Convert str dict into each column with each value and remove negative values
-def reformat_dataframe(data):
+def reformat_dataframe(data, filename):
+    filename = filename.split('.')[0]
+    _, year, _, week = filename.split('_')
+    year = int(year)
+    week = int(week)
+
     data.columns = ['day', 'time', 'aforo']
     reformatted = data['aforo'].apply(lambda x: ast.literal_eval(x)).apply(lambda x: {k: x[k][0] for k in x.keys()}).apply(pd.Series)
     data = data.drop('aforo', axis=1).assign(**reformatted)
+    data['year'] = year
+    data['week'] = week
+    data['year_day'] = data['day'].apply(lambda x: datetime.datetime.strptime(f"{year}-W{week}-{get_key(int_weekday, x)}", "%Y-W%W-%w"))
+    # parse time from the time column and apply to the year_day
+    data['time'] = data['time'].apply(lambda x: datetime.datetime.strptime(x, "%H:%M").time())
+    data['year_day'] = data.apply(lambda x: datetime.datetime.combine(x['year_day'], x['time']), axis=1)
+    
+    # Remove all rows that have a timestamp with a minute inding in 15 or 45
+    # data = data[~data['time'].apply(lambda x: x.minute in [15, 45])]
+    
+    data = data.reset_index(drop=True).set_index('time')
+
     num = data._get_numeric_data()
     num[num < 0] = 0
     return data
 
+def remove_outliers(data, place):
+    # Calculate Q1, Q3, and IQR
+    q1_q3 = data.groupby(['day', 'time'])[place].quantile([0.25, 0.75]).unstack(level=-1)
+    q1_q3.columns = ['Q1', 'Q3']
+    q1_q3['IQR'] = q1_q3['Q1'] * 1.5
+
+    # Merge back with the original dataframe
+    data_merged = data.merge(q1_q3, left_on=['day', 'time'], right_index=True)
+
+    # Filter out the outliers using the IQR * 1.5 rule
+    filtered_df = data_merged[
+        (data_merged[place] >= data_merged['Q1'] - data_merged['IQR']) &
+        (data_merged[place] <= data_merged['Q3'] + data_merged['IQR'])
+    ]
+
+    return filtered_df.drop(['Q1', 'Q3', 'IQR'], axis=1)
+
+
+def read_csv(root, file):
+    data = pd.read_csv(f"{root}{file}")
+    data = reformat_dataframe(data, file)
+    return data
 
 def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
     total_data = pd.DataFrame()
@@ -30,10 +77,7 @@ def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
     for root, dirs, files in os.walk(f'{folder}/', topdown=True):
         files.sort(reverse=reverse)
         if start >= 0:
-            if end < 0:
-                files = files[start:]
-            else:
-                files = files[start:end]
+            files = files[start:] if end < 0 else files[start:end]
         if (top >= 0):
             files.sort(reverse=True)
         for file in files:
@@ -44,8 +88,7 @@ def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
                     if top < 0:
                         break
                 print(f"{root}{file}")
-                data = pd.read_csv(f"{root}{file}")
-                data = reformat_dataframe(data)
+                data = read_csv(root, file)
                 total_data = pd.concat([total_data, data])
     return total_data
 
@@ -85,20 +128,20 @@ if __name__ == '__main__':
         print("Start week must be lower than end week")
         exit()
     day = args.day
-    comoda = args.place
+    place = args.place
 
     dir = DEFAULT_DIR
     data = scan_dir(dir, args.start, args.end, args.latest, args.reverse)
     
-    tmp = data.groupby(['day','time'], as_index = False)
+    info_dataframe = data.groupby(['day','time'], as_index = False)
     jumps = 20
-    mean_max, median_max = (tmp.mean()[comoda].max(), tmp.median()[comoda].max())
+    mean_max, median_max = (info_dataframe.mean()[place].max(), info_dataframe.median()[place].max())
     y_ticks = np.arange(0, max(mean_max, median_max) + jumps, jumps)
 
     if day:
-        record_histogram(data, day, comoda, y_ticks, args.append)
+        record_histogram(data, day, place, y_ticks, args.append)
         exit()
 
     days = data.day.unique().tolist()
     for d in days:
-        record_histogram(data, d, comoda, y_ticks, args.append)
+        record_histogram(data, d, place, y_ticks, args.append)
