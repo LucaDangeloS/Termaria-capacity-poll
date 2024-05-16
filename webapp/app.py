@@ -105,7 +105,7 @@ if COMPARE:
     timeframe_data.loc[mean.index.intersection(timeframe_data.index), PLACES_INDEXES] = mean
     
     # Centered days range text
-    st.markdown(f"<h3 style='text-align: center;'> Media de {(from_date + datetime.timedelta(days=weekday_idx)).strftime("%d/%m/%Y")} - {(datetime.datetime.now()).strftime("%d/%m/%Y")}</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align: center;'> Media de {(from_date + datetime.timedelta(days=weekday_idx)).strftime('%d/%m/%Y')} - {(datetime.datetime.now()).strftime('%d/%m/%Y')}</h3>", unsafe_allow_html=True)
 
 # Create view for the chart
 formatted_data = timeframe_data[[selected_place, 'year_day']]
