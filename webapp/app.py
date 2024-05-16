@@ -1,4 +1,4 @@
-from app_constants import places, spanish_weekday, int_weekday
+from app_constants import places, spanish_weekday, int_weekday, PLACES_INDEXES
 from streamlit_option_menu import option_menu # type: ignore
 from process_data import read_csv, scan_dir, remove_outliers
 from schedule import every, repeat, run_pending
@@ -9,8 +9,7 @@ import altair as alt
 import pandas as pd
 import datetime
 import os
-
-PLACES_INDEXES = list(places.keys())
+# from sectores import sectores
 
 # Main data
 # data = scan_dir("./aforo/", -1, -1, -1, reverse=False)
@@ -127,6 +126,15 @@ virtual_max = all_data[selected_place].quantile(0.992)
 
 # st.markdown(f"<h2>Aforo de {selected_place}</h2>", unsafe_allow_html=True)
 # Show chart
+
+# IDEAS: 
+# plot bar chart with error bars marking the 95% confidence interval for the periods
+# Make a temporal comparison (mopnth after month, year after year) with bars marking the difference
+# Diff heatmap
+# heatmap
+
+#TODO: Separate this into a function? 
+
 if COMPARE:
     # Insert data from the current week for comparison
     COMPARISON_COLUMNS = ['Esta semana', selected_time_period]
@@ -208,3 +216,4 @@ else:
     )
 
 st.altair_chart(chart, use_container_width=True)
+# sectores(data)

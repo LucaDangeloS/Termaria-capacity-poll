@@ -1,4 +1,5 @@
 places = {'Gimnasio': 15, 'Talaso': 4, 'Fan Interior': 16, "Sport": 2, }
+PLACES_INDEXES = list(places.keys())
 week_aperture_time = '7:30'
 week_closing_time = '22:30'
 int_weekday = {

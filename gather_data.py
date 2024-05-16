@@ -52,7 +52,7 @@ def gather_data(week_day, time):
     # Sala fitness sport id: 15
     # dictionary with the key of places and value of data
     aforos = {
-        place: next(((d['Ocupacion'], d['Aforo']) for d in data if d['IdRecinto'] == placeId), None) 
+        place: next(((d['Ocupacion'], d['Aforo'], d['Entradas'], d['Salidas']) for d in data if d['IdRecinto'] == placeId), None) 
     for place, placeId in places.items()
     }
     write_data(week_day, time, aforos)
