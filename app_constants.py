@@ -11,6 +11,15 @@ int_weekday = {
     5: 'saturday',
     6: 'sunday',
 }
+pandas_int_weekday = {
+    0: 'sunday',
+    1: 'monday',
+    2: 'tuesday',
+    3: 'wednesday',
+    4: 'thursday',
+    5: 'friday',
+    6: 'saturday',
+}
 spanish_weekday = {
     'monday': 'Lunes',
     'tuesday': 'Martes',

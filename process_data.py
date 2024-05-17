@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse as ap
 import datetime
-from app_constants import int_weekday
+from app_constants import pandas_int_weekday
 
 DEFAULT_DIR = "aforo"
 DEFAULT_PLACE = "Gimnasio"
@@ -32,7 +32,7 @@ def reformat_dataframe(data, filename):
     data = data.drop('aforo', axis=1).assign(**reformatted)
     data['year'] = year
     data['week'] = week
-    data['year_day'] = data['day'].apply(lambda x: datetime.datetime.strptime(f"{year}-W{week}-{get_key(int_weekday, x)}", "%Y-W%W-%w"))
+    data['year_day'] = data['day'].apply(lambda x: datetime.datetime.strptime(f"{year}-W{week}-{get_key(pandas_int_weekday, x)}", "%Y-W%W-%w"))
     # parse time from the time column and apply to the year_day
     data['time'] = data['time'].apply(lambda x: datetime.datetime.strptime(x, "%H:%M").time())
     data['year_day'] = data.apply(lambda x: datetime.datetime.combine(x['year_day'], x['time']), axis=1)
@@ -40,7 +40,7 @@ def reformat_dataframe(data, filename):
     # Remove all rows that have a timestamp with a minute inding in 15 or 45
     # data = data[~data['time'].apply(lambda x: x.minute in [15, 45])]
     
-    data = data.reset_index(drop=True).set_index('time')
+    data = data.reset_index(drop=True)
 
     num = data._get_numeric_data()
     num[num < 0] = 0
@@ -60,8 +60,14 @@ def remove_outliers(data, place):
         (data_merged[place] >= data_merged['Q1'] - data_merged['IQR']) &
         (data_merged[place] <= data_merged['Q3'] + data_merged['IQR'])
     ]
+    filtered_df = filtered_df.drop(['Q1', 'Q3', 'IQR'], axis=1)
 
-    return filtered_df.drop(['Q1', 'Q3', 'IQR'], axis=1)
+    # Remove the days which mean is 0
+    mask = filtered_df.groupby(['year', 'day', 'week']).mean(numeric_only=True)[place].reset_index().rename(columns={place: 'mean'})
+    filtered_df = filtered_df.merge(mask, on=['year', 'week', 'day'])
+    filtered_df = filtered_df[filtered_df['mean'] > 0].drop('mean', axis=1)
+    
+    return filtered_df
 
 
 def read_csv(root, file):
