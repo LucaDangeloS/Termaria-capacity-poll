@@ -2,9 +2,9 @@
 import ast
 import os
 import sys
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
+import pandas as pd # type: ignore
+import numpy as np # type: ignore
+import matplotlib.pyplot as plt # type: ignore
 import argparse as ap
 import datetime
 from app_constants import pandas_int_weekday
@@ -41,7 +41,9 @@ def reformat_dataframe(data, filename):
     # data = data[~data['time'].apply(lambda x: x.minute in [15, 45])]
     
     data = data.reset_index(drop=True)
-
+    # drop duplicated timestamps
+    data = data[~data['year_day'].duplicated(keep='last')]
+    
     num = data._get_numeric_data()
     num[num < 0] = 0
     return data

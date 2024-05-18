@@ -28,8 +28,6 @@ Make a temporal comparison (mopnth after month, year after year) with bars marki
 
 def historic_stats_data(get_data):
 
-    st.title('Estadísticas')
-
     with st.spinner("Cargando datos..."):
         all_data = get_data()
 

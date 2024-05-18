@@ -5,4 +5,4 @@ schedule
 beautifulsoup4
 matplotlib
 streamlit-vega-lite
-
+streamlit-toggle-switch

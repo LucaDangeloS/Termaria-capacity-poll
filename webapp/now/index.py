@@ -74,13 +74,22 @@ def now_stats_page(get_data, curr_week_start, curr_weekday_idx):
     current_data = data[data.year_day >= curr_week_start]
     virtual_max = all_data[selected_place].quantile(0.992)
     
-    if COMPARE:
+    @st.cache_data(ttl=datetime.timedelta(minutes=15), show_spinner=False)
+    def add_mean_data(timeframe_data, current_data):
         ### MORE DATA PROCESSING ###
         mean = remove_outliers(data[(data.year_day >= from_date) & (data.year_day < curr_week_start)], selected_place).groupby(['day', 'time']).mean().round(0)
         mean = mean.reset_index().set_index('time')[PLACES_INDEXES]
         timeframe_data = timeframe_data.set_index('time')
         current_data = current_data.set_index('time')
+        # drop duplicated keeping the last
+        # timeframe_data = timeframe_data[~timeframe_data.index.duplicated(keep='last')]
+        # current_data = current_data[~current_data.index.duplicated(keep='last')]
         timeframe_data.loc[mean.index.intersection(timeframe_data.index), PLACES_INDEXES] = mean
+
+        return timeframe_data, current_data
+
+    if COMPARE:
+        timeframe_data, current_data = add_mean_data(timeframe_data, current_data)
 
         # Centered days range text
         st.markdown(f"<h3 style='text-align: center;'> Media de {(from_date + datetime.timedelta(days=weekday_idx)).strftime('%d/%m/%Y')} - {(curr_week_start).strftime('%d/%m/%Y')}</h3>", unsafe_allow_html=True)

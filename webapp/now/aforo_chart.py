@@ -71,7 +71,6 @@ def comparison_chart(timeframe_data, current_data, place, time_period, virtual_m
                 legend=alt.Legend(
                     title='Comparación', 
                     orient='top-left',
-                    # values=['Actual', selected_week_number],
                 ),
             ),
             tooltip=[
