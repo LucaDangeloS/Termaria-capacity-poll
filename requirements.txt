@@ -1,4 +1,5 @@
-streamlit
+# streamlit
+./streamlit-1.32.2-py2.py3-none-any.whl
 numpy
 pandas
 schedule
@@ -6,3 +7,5 @@ beautifulsoup4
 matplotlib
 streamlit-vega-lite
 streamlit-toggle-switch
+plotly
+# streamlit-plotly-events
