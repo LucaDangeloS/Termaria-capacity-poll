@@ -16,7 +16,7 @@ def chart(data, place, virtual_max):
                 y=alt.Y(f'{place}:Q', title='Personas', scale=alt.Scale(domain=(0, virtual_max))).stack(None), 
                 color=alt.Color(
                     'temporal:N', 
-                    scale=alt.Scale(range=[graph_colors['primary']]),
+                    scale=alt.Scale(range=[graph_colors[0]]),
                     legend=None,
                 )
                 ,
@@ -67,7 +67,7 @@ def comparison_chart(timeframe_data, current_data, place, time_period, virtual_m
             y=alt.Y('Personas:Q', title='Personas', scale=alt.Scale(domain=(0, virtual_max))).stack(None), 
             color=alt.Color(
                 'temporal:N', 
-                scale=alt.Scale(range=[graph_colors['primary'], graph_colors['secondary']]),
+                scale=alt.Scale(range=graph_colors),
                 legend=alt.Legend(
                     title='Comparación', 
                     orient='top-left',

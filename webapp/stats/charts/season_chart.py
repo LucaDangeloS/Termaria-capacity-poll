@@ -16,7 +16,7 @@ def season_chart(data, place, virtual_max):
                 y=alt.Y(f'{place}:Q', title='Personas', scale=alt.Scale(domain=(0, virtual_max))).stack(None), 
                 color=alt.Color(
                     'temporal:N', 
-                    scale=alt.Scale(range=[graph_colors['primary']]),
+                    scale=alt.Scale(range=[graph_colors[0]]),
                     legend=None,
                 )
                 ,

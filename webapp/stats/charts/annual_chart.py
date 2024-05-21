@@ -95,16 +95,16 @@ def annual_chart(data):
     comparison = COMPARISON_COLUMNS[comparison_idx - 1]
 
     ### Main chart
-    if comparison_idx == 3:
+    if (chart_max_toggle and chart_mean_toggle):
         chart = alt.Chart(formatted_data).mark_area(
                 opacity=0.9,
                 interpolate='step',
             ).encode(
-                x=alt.X('year_day:T', title='Día', axis=alt.Axis(format='%Y - %d/%m')),
+                x=alt.X('year_day:T', title='', axis=alt.Axis(format='%Y - %d/%m')),
                 y=alt.Y('Personas:Q', title='Personas', scale=alt.Scale(domain=(0, virtual_max))).stack(None), 
                 color=alt.Color(
                     'type:N',
-                    scale=alt.Scale(range=[graph_colors['primary'], graph_colors['secondary']]),
+                    scale=alt.Scale(range=graph_colors),
                     legend=alt.Legend(
                         title='', 
                         orient='top-left',
@@ -134,9 +134,9 @@ def annual_chart(data):
                 opacity=0.9,
                 interpolate='step',
             ).encode(
-                x=alt.X('year_day:T', title='Día', axis=alt.Axis(format='%Y - %d/%m')),
+                x=alt.X('year_day:T', title='', axis=alt.Axis(format='%Y - %d/%m')),
                 y=alt.Y(f'{comparison}:Q', title='Personas', scale=alt.Scale(domain=(0, virtual_max))).stack(None), 
-                color=alt.value(graph_colors['primary'] if comparison == 'Media' else graph_colors['secondary']),
+                color=alt.value(graph_colors[0] if comparison == 'Media' else graph_colors[1]),
                 tooltip=[
                     alt.Tooltip(
                         field=comparison, 
@@ -163,11 +163,23 @@ def annual_chart(data):
     ### Get years from the data that have the first week of the year
     years = data[data.week == 1].year.unique()
     year_dummy_df = pd.DataFrame({'year': years, 'year_day': pd.to_datetime([f"{year}-01-01" for year in years])})
-    year_lines = alt.Chart(year_dummy_df).mark_rule(color='blue').encode(
-        x=alt.X('year_day:T', title='Año', axis=alt.Axis(format='%Y')),
+    year_lines = alt.Chart(year_dummy_df).mark_rule(color='firebrick').encode(
+        x=alt.X('year_day:T', title='Día, Año', axis=alt.Axis(format='%Y')),
         size=alt.value(1),
     ).interactive(
         bind_x = False
+    )
+
+    # Add title to the chart
+    chart = chart.properties(
+        title={
+            "text": "Aforo anual",
+            "subtitle": f"Personas en {place}",
+            "subtitleColor": "gray",
+            "anchor": "middle",
+            "fontSize": 20,
+            "fontWeight": "bold"
+        }
     )
 
     # Create a df with each week ofevery year, keeping the year_day column with the first day of the week
@@ -195,7 +207,7 @@ def annual_chart(data):
                 alt.Tooltip(
                     field='year_day', 
                     timeUnit='utcyearmonthdate', 
-                    title='Hora'
+                    title='Día'
                 ),
             ],
             size=alt.value(50),
