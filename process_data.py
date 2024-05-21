@@ -36,7 +36,8 @@ def reformat_dataframe(data, filename):
     # parse time from the time column and apply to the year_day
     data['time'] = data['time'].apply(lambda x: datetime.datetime.strptime(x, "%H:%M").time())
     data['year_day'] = data.apply(lambda x: datetime.datetime.combine(x['year_day'], x['time']), axis=1)
-    
+    # Fix years of dates that are in the next year
+    data['year'] = data['year_day'].apply(lambda x: x.year)
     # Remove all rows that have a timestamp with a minute inding in 15 or 45
     # data = data[~data['time'].apply(lambda x: x.minute in [15, 45])]
     
@@ -50,19 +51,22 @@ def reformat_dataframe(data, filename):
 
 def remove_outliers(data, place):
     # Calculate Q1, Q3, and IQR
-    q1_q3 = data.groupby(['day', 'time'])[place].quantile([0.25, 0.75]).unstack(level=-1)
-    q1_q3.columns = ['Q1', 'Q3']
-    q1_q3['IQR'] = q1_q3['Q1'] * 1.5
+    filtered_df = data
+    q1_q3 = filtered_df.groupby(['day', 'time'])[place].quantile([0.25, 0.75]).unstack(level=-1)
 
-    # Merge back with the original dataframe
-    data_merged = data.merge(q1_q3, left_on=['day', 'time'], right_index=True)
+    if not q1_q3.empty:
+        q1_q3.columns = ['Q1', 'Q3']
+        q1_q3['IQR'] = q1_q3['Q1'] * 1.5
 
-    # Filter out the outliers using the IQR * 1.5 rule
-    filtered_df = data_merged[
-        (data_merged[place] >= data_merged['Q1'] - data_merged['IQR']) &
-        (data_merged[place] <= data_merged['Q3'] + data_merged['IQR'])
-    ]
-    filtered_df = filtered_df.drop(['Q1', 'Q3', 'IQR'], axis=1)
+        # Merge back with the original dataframe
+        data_merged = filtered_df.merge(q1_q3, left_on=['day', 'time'], right_index=True)
+
+        # Filter out the outliers using the IQR * 1.5 rule
+        filtered_df = data_merged[
+            (data_merged[place] >= data_merged['Q1'] - data_merged['IQR']) &
+            (data_merged[place] <= data_merged['Q3'] + data_merged['IQR'])
+        ]
+        filtered_df = filtered_df.drop(['Q1', 'Q3', 'IQR'], axis=1)
 
     # Remove the days which mean is 0
     mask = filtered_df.groupby(['year', 'day', 'week']).mean(numeric_only=True)[place].reset_index().rename(columns={place: 'mean'})
