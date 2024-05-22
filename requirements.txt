@@ -5,7 +5,7 @@ pandas
 schedule
 beautifulsoup4
 matplotlib
-streamlit-vega-lite
-streamlit-toggle-switch
 plotly
+streamlit-vega-lite
+streamlit-option-menu
 # streamlit-plotly-events

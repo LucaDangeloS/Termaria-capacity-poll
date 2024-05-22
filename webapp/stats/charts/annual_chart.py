@@ -6,7 +6,6 @@ import streamlit as st # type: ignore
 import altair as alt # type: ignore
 from app_constants import pandas_int_weekday, PLACES_INDEXES
 import pandas as pd # type: ignore
-import streamlit_toggle as toggle # type: ignore
 import numpy as np
 
 COMPARISON_COLUMNS = ['Máximo', 'Media', 'Personas', '']

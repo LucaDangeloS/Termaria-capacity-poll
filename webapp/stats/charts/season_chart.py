@@ -8,7 +8,6 @@ import altair as alt # type: ignore
 from app_constants import PLACES_INDEXES, months_spanish, seasons, spanish_weekday
 from webapp.stats.charts.components.weekly_chart import process_weekly_data, weekly_chart
 import pandas as pd # type: ignore
-import streamlit_toggle as toggle # type: ignore
 import numpy as np
 import plotly.express as px
 # from streamlit_plotly_events import plotly_events

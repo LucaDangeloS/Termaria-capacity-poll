@@ -9,7 +9,6 @@ from app_constants import pandas_int_weekday, PLACES_INDEXES, months_spanish, sp
 from webapp.stats.charts.components.day_period_chart import day_period_chart
 from webapp.stats.charts.components.weekly_chart import process_weekly_data, weekly_chart
 import pandas as pd # type: ignore
-import streamlit_toggle as toggle # type: ignore
 import numpy as np
 import plotly.express as px
 # from streamlit_plotly_events import plotly_events
