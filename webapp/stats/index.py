@@ -34,6 +34,9 @@ def historic_stats_data(get_data):
             options = list(charts_options.keys()),
         )
 
+        # Info
+        st.info('El periodo de Mañana es hasta las 15:00 y el de Tarde es a partir de esa hora.')
+        st.info('Los datos más antiguos son de Agosto del 2022.')
 
     # With the current selected chart, call the corresponding function
     charts_options[selected_chart](all_data)

@@ -22,7 +22,11 @@ def reprocess_data(data, place):
     formatted_data = formatted_data[['year', 'day', 'week', COMPARISON_COLUMNS[0], COMPARISON_COLUMNS[1]]].round(0).reset_index(drop=True)
 
     # Combine the year, week and day columns into a year_day column
-    formatted_data['year_day'] = formatted_data.apply(lambda x: datetime.datetime.strptime(f"{x['year']}-W{x['week']}-{get_key(pandas_int_weekday, x['day'])}", "%Y-W%W-%w"), axis=1)
+    try:
+        formatted_data['year_day'] = formatted_data.apply(lambda x: datetime.datetime.strptime(f"{x['year']}-W{x['week']}-{get_key(pandas_int_weekday, x['day'])}", "%Y-W%W-%w"), axis=1)
+    except Exception as e:
+        # insert empty year_day column
+        formatted_data['year_day'] = pd.to_datetime('today')
 
     # remove duplicates
     # Convert to long format adding the type column that has the values 'Máximo' and 'Media'
@@ -173,6 +177,8 @@ def __annual_chart(formatted_data, place, virtual_max, chart_max_toggle, chart_m
 
     @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
     def calculate_trend_line(data):
+        if data.empty:
+            return data
         z = np.polyfit(data.index, data['Personas'], 1)
         p = np.poly1d(z)
         data['trend'] = p(data.index).round(2)
