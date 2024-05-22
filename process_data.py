@@ -45,6 +45,9 @@ def reformat_dataframe(data, filename):
     # drop duplicated timestamps
     data = data[~data['year_day'].duplicated(keep='last')]
     
+    # Add a column with the period of the day. After 15:00 is afternoon, before is morning
+    data['period'] = data['time'].apply(lambda x: 'Tarde' if x.hour >= 15 else 'Mañana')
+
     num = data._get_numeric_data()
     num[num < 0] = 0
     return data

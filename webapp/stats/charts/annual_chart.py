@@ -45,53 +45,8 @@ def reprocess_data(data, place):
     return formatted_data
 
 
-def annual_chart(data):
-    with st.expander('Instalación', True):
-        place = option_menu(
-            menu_title = '',
-            menu_icon = '',
-            icons = ['none'] * 3,
-            orientation = 'horizontal',
-            options = PLACES_INDEXES[:-1],
-            default_index = 0,
-        )
-
-    selector_options = [
-        'Inicio de los tiempos',
-    ] + data.year.unique().tolist()[::-1]
-
-    with st.container():
-        col1, col2 = st.columns([2, 1])
-        with col1:
-            selected_period_option = st.selectbox('Selecciona el período', selector_options)
-            selected_first = (selected_period_option == selector_options[0])
-        with col2:
-            # Toggle para marcar desde
-            st.write('\n')  # Add a newline for vertical spacing
-            st.write('\n')  # Add another newline for vertical spacing
-            from_toggle = st.checkbox('Desde', selected_first, disabled=selected_first)
-
-        with st.container():
-            col1, col2, col3, col4 = st.columns(4)
-            # add some padding in the left
-            with col1:
-                chart_max_toggle = st.checkbox('Máximo', value=True)
-            with col2:
-                chart_mean_toggle = st.checkbox('Media', value=True) * 2
-            with col3:
-                chart_media_semanal_toggle = st.checkbox('Media Semanal', value=True)
-            with col4:
-                trend_line_toggle = st.checkbox('Linea de tendencia', value=False)
-
-    if selected_first:
-        data = data
-    else:
-        data = data[data.year >= selected_period_option] if from_toggle else data[data.year == selected_period_option]
-
-    formatted_data = reprocess_data(data, place)
-    virtual_max = formatted_data['Personas'].max() * 1.2
-
-    comparison_idx =  (chart_max_toggle + chart_mean_toggle)
+def __annual_chart(formatted_data, place, virtual_max, chart_max_toggle, chart_mean_toggle, chart_media_semanal_toggle, trend_line_toggle, title_override=None, subtitle_override=None):
+    comparison_idx = (chart_max_toggle + chart_mean_toggle)
     comparison = COMPARISON_COLUMNS[comparison_idx - 1]
 
     ### Main chart
@@ -161,7 +116,7 @@ def annual_chart(data):
         )
 
     ### Get years from the data that have the first week of the year
-    years = data[data.week == 1].year.unique()
+    years = formatted_data[formatted_data.week == 1].year.unique()
     year_dummy_df = pd.DataFrame({'year': years, 'year_day': pd.to_datetime([f"{year}-01-01" for year in years])})
     year_lines = alt.Chart(year_dummy_df).mark_rule(color='firebrick').encode(
         x=alt.X('year_day:T', title='Día, Año', axis=alt.Axis(format='%Y')),
@@ -173,8 +128,8 @@ def annual_chart(data):
     # Add title to the chart
     chart = chart.properties(
         title={
-            "text": "Aforo anual",
-            "subtitle": f"Personas en {place}",
+            "text": title_override or "Aforo anual",
+            "subtitle": subtitle_override or f"Personas en {place}",
             "subtitleColor": "gray",
             "anchor": "middle",
             "fontSize": 20,
@@ -182,7 +137,7 @@ def annual_chart(data):
         }
     )
 
-    # Create a df with each week ofevery year, keeping the year_day column with the first day of the week
+    # Create a df with each week of every year, keeping the year_day column with the first day of the week
     mean_week = formatted_data.groupby(['year', 'week']).agg(
         {
             'Personas' : 'mean',
@@ -254,12 +209,60 @@ def annual_chart(data):
         trend_line = alt.Chart(pd.DataFrame()).mark_line().encode().interactive(
             bind_x = False
         )
-        # trend_line = alt.Chart(mean_week).transform_loess(
-        #     'year_day', 'Personas', groupby=['year'], as_=['year_day', 'Personas']
-        # ).mark_line(color='black').encode(
-        #     x='year_day:T',
-        #     y='Personas:Q',
-        # )
 
     st.altair_chart((chart + year_lines + mean_week_chart + trend_line), use_container_width=True)
 
+
+def annual_chart(data):
+    with st.expander('Instalación', True):
+        place = option_menu(
+            menu_title = '',
+            menu_icon = '',
+            icons = ['none'] * 3,
+            orientation = 'horizontal',
+            options = PLACES_INDEXES[:-1],
+            default_index = 0,
+        )
+
+    selector_options = [
+        'Inicio de los tiempos',
+    ] + data.year.unique().tolist()[::-1]
+
+    with st.container():
+        col1, col2, col3 = st.columns([1, 1, 2])
+        with col1:
+            selected_period_option = st.selectbox('Selecciona el período', selector_options)
+            selected_first = (selected_period_option == selector_options[0])
+        with col2:
+            # Toggle para marcar desde
+            st.write('\n')  # Add a newline for vertical spacing
+            st.write('\n')  # Add another newline for vertical spacing
+            from_toggle = st.checkbox('Desde', selected_first, disabled=selected_first)
+        with col3:
+            periods_selected = st.multiselect('Periodos', data['period'].unique().tolist(), default=data['period'].unique().tolist())
+
+        with st.container():
+            col1, col2, col3, col4 = st.columns(4)
+            # add some padding in the left
+            with col1:
+                chart_max_toggle = st.checkbox('Máximo', value=True)
+            with col2:
+                chart_mean_toggle = st.checkbox('Media', value=True) * 2
+            with col3:
+                chart_media_semanal_toggle = st.checkbox('Media Semanal', value=True)
+            with col4:
+                trend_line_toggle = st.checkbox('Linea de tendencia', value=False)
+                
+
+    if selected_first:
+        data = data
+    else:
+        data = data[data.year >= selected_period_option] if from_toggle else data[data.year == selected_period_option]
+
+    virtual_max = data[place].max() * 1.2
+
+    data = data[data['period'].isin(periods_selected)]
+
+    formatted_data = reprocess_data(data, place)
+    
+    __annual_chart(formatted_data, place, virtual_max, chart_max_toggle, chart_mean_toggle, chart_media_semanal_toggle, trend_line_toggle)
