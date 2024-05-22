@@ -1,3 +1,5 @@
+import datetime
+
 places = {'Gimnasio': 15, 'Talaso': 4, 'Fan Interior': 16, "Sport": 2, }
 PLACES_INDEXES = list(places.keys())
 week_aperture_time = '7:30'
@@ -50,12 +52,13 @@ time_closing = {
                 6: '15:00', 
 }
 
-seasons = {
-    'spring': ['03-20', '06-21'],
-    'summer': ['06-21', '09-23'],
-    'fall': ['09-23', '12-21'],
-    'winter': ['12-21', '03-20'],
-}
+seasons = [
+    (datetime.datetime.strptime('03-20', '%m-%d'), 'Invierno'),
+    (datetime.datetime.strptime('06-21', '%m-%d'), 'Primavera'),
+    (datetime.datetime.strptime('09-23', '%m-%d'), 'Verano'),
+    (datetime.datetime.strptime('12-21', '%m-%d'), 'Otoño'),
+    (datetime.datetime.strptime('12-31', '%m-%d'), 'Invierno'),
+]
 
 months_spanish = {
     1: 'Enero',
