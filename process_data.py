@@ -84,7 +84,7 @@ def read_csv(root, file):
     data = reformat_dataframe(data, file)
     return data
 
-def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
+def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False, verbose=False):
     total_data = pd.DataFrame()
     if (end == 0):
         end = -1
@@ -102,7 +102,7 @@ def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
                     top -= 1
                     if top < 0:
                         break
-                print(f"{root}{file}")
+                verbose and print(f"{root}{file}")
                 data = read_csv(root, file)
                 total_data = pd.concat([total_data, data])
     return total_data

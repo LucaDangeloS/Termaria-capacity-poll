@@ -5,8 +5,8 @@ import altair as alt
 from app_constants import pandas_int_weekday, PLACES_INDEXES, months_spanish, int_weekday, spanish_weekday
 from process_data import interpolate_missing_times, remove_outliers, get_key
 from streamlit_option_menu import option_menu
-from webapp.stats.charts.components.heatmap_chart import heatmap_chart
-from webapp.stats.charts.components.weekly_chart import process_weekly_data # type: ignore
+from stats.charts.components.heatmap_chart import heatmap_chart
+from stats.charts.components.weekly_chart import process_weekly_data # type: ignore
 import plotly.graph_objects as go
 import pandas as pd
 
@@ -31,9 +31,8 @@ def process_hour_data(data):
     formatted_data['time'] = formatted_data['time'].dt.strftime('%H:%M')
     return formatted_data
 
-# @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
+@st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
 def reprocess_data(data, place):
-    print('Reprocessing data')
     clean_data = remove_outliers(data, place)
     clean_data = clean_data.assign(month = clean_data['year_day'].dt.month)
     clean_data = clean_data.assign(month = clean_data['month'].map(months_spanish))
@@ -84,7 +83,7 @@ def heatmaps(data):
     z_yearly.index = pd.Categorical(z_yearly.index, categories=months_spanish.values(), ordered=True)
     z_yearly.sort_index(inplace=True)
     z_yearly.fillna(0, inplace=True)
-    heatmap_chart(z_yearly, title_override='Ocupación media por día del mes', xaxis_title='Día', yaxis_title='Mes', colorscale='plasma')
+    heatmap_chart(z_yearly, title_override='Ocupación media por día del año', xaxis_title='Día', yaxis_title='Mes', colorscale='plasma')
 
     ### YEARLY PERIOD DATA ###
     diffs = yearly_period_data.pivot_table(index=['month', 'month_day'], columns='period', values=place).reset_index()
@@ -115,7 +114,7 @@ def heatmaps(data):
     ))
 
     heatmap.update_layout(
-        title='Diferencia de media (Tarde - Mañana) por día del mes',
+        title='Diferencia de media (Tarde - Mañana) por día del año',
         xaxis_title='Día',
         yaxis_title='Mes',
     )

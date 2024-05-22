@@ -6,7 +6,7 @@ from process_data import remove_outliers, get_key
 import streamlit as st # type: ignore
 import altair as alt # type: ignore
 from app_constants import PLACES_INDEXES, months_spanish, seasons, spanish_weekday
-from webapp.stats.charts.components.weekly_chart import process_weekly_data, weekly_chart
+from stats.charts.components.weekly_chart import process_weekly_data, weekly_chart
 import pandas as pd # type: ignore
 import numpy as np
 import plotly.express as px
@@ -29,7 +29,6 @@ def process_season_data(data):
 
 @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
 def reprocess_data(data, place):
-    print('Reprocessing data')
     clean_data = remove_outliers(data, place)
     
     ### ADD SEASON DATA ###

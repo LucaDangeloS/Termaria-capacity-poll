@@ -4,7 +4,7 @@ from streamlit_option_menu import option_menu # type: ignore
 from process_data import remove_outliers
 import streamlit as st # type: ignore
 import datetime
-from webapp.now.aforo_chart import chart, comparison_chart
+from now.aforo_chart import chart, comparison_chart
 
 def debug(timeframe_data, current_data):
     with st.container():

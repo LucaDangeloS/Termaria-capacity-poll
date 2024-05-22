@@ -13,7 +13,6 @@ COMPARISON_COLUMNS = ['Máximo', 'Media', 'Personas', '']
 
 @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
 def reprocess_data(data, place):
-    print('Reprocessing data')
     # Add the max col and mean col
     formatted_data = remove_outliers(data, place)
     formatted_data[COMPARISON_COLUMNS[0]] = formatted_data.groupby(['year', 'day', 'week'])[place].transform('max')

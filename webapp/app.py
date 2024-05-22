@@ -2,13 +2,9 @@ from streamlit_option_menu import option_menu # type: ignore
 from process_data import scan_dir
 import streamlit as st # type: ignore
 import datetime
-from webapp.now.index import now_stats_page
-from webapp.stats.index import historic_stats_data
+from now.index import now_stats_page
+from stats.index import historic_stats_data
 
-# Main data
-# data = scan_dir("./aforo/", -1, -1, -1, reverse=False)
-# data = pd.DataFrame()
-print("Refreshed")
 # Tab name
 st.set_page_config(page_title='Aforo de Termaria', layout='wide')
 

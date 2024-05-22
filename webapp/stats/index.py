@@ -2,11 +2,11 @@ import streamlit as st # type: ignore
 from streamlit_option_menu import option_menu # type: ignore
 import streamlit as st # type: ignore
 
-from webapp.stats.charts.annual_chart import *
-from webapp.stats.charts.temporal_comparison import *
-from webapp.stats.charts.season_chart import *
-from webapp.stats.charts.heatmaps import *
-from webapp.stats.charts.trends import *
+from stats.charts.annual_chart import *
+from stats.charts.temporal_comparison import *
+from stats.charts.season_chart import *
+from stats.charts.heatmaps import *
+from stats.charts.trends import *
 
 '''
 IDEAS:
