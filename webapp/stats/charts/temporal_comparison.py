@@ -60,7 +60,7 @@ def temporal_comparison_chart(data):  # sourcery skip: extract-duplicate-method
 
     options_year_1 = data.year.unique().tolist()[::-1]
 
-    selected_years = sorted(st.multiselect('Seleccionar años a comparar', options_year_1, default=options_year_1))
+    selected_years = sorted(st.multiselect('Seleccionar años para comparar', options_year_1, default=options_year_1, placeholder='Seleccionar años'))
 
     data = data[(data['year'].isin(selected_years))]
     data = data.assign(month = data['year_day'].dt.month)

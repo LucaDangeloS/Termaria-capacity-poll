@@ -11,7 +11,6 @@ import numpy as np
 
 COMPARISON_COLUMNS = ['Máximo', 'Media', 'Personas', '']
 
-# https://altair-viz.github.io/user_guide/interactions.html
 
 @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
 def reprocess_data(data, place):
@@ -239,7 +238,7 @@ def annual_chart(data):
             st.write('\n')  # Add another newline for vertical spacing
             from_toggle = st.checkbox('Desde', selected_first, disabled=selected_first)
         with col3:
-            periods_selected = st.multiselect('Periodos', data['period'].unique().tolist(), default=data['period'].unique().tolist())
+            periods_selected = st.multiselect('Periodos', data['period'].unique().tolist(), default=data['period'].unique().tolist(), placeholder='Seleccionar periodos')
 
         with st.container():
             col1, col2, col3, col4 = st.columns(4)

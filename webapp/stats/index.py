@@ -5,7 +5,7 @@ import streamlit as st # type: ignore
 from webapp.stats.charts.annual_chart import *
 from webapp.stats.charts.temporal_comparison import *
 from webapp.stats.charts.season_chart import *
-from webapp.stats.charts.heatmap import *
+from webapp.stats.charts.heatmaps import *
 from webapp.stats.charts.trends import *
 
 '''
@@ -24,7 +24,7 @@ def historic_stats_data(get_data):
             'Gráfica anual': annual_chart,
             'Comparación temporal': temporal_comparison_chart,
             'Por estaciones': season_chart,
-            'Mapa de calor por días': heatmap,
+            'Mapas de calor': heatmaps,
             'Tendencias': trends,
         }
 

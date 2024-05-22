@@ -4,6 +4,11 @@ places = {'Gimnasio': 15, 'Talaso': 4, 'Fan Interior': 16, "Sport": 2, }
 PLACES_INDEXES = list(places.keys())
 week_aperture_time = '7:30'
 week_closing_time = '22:30'
+saturday_aperture_time = '9:00'
+saturday_closing_time = '21:00'
+sunday_aperture_time = '9:30'
+sunday_closing_time = '15:00'
+
 int_weekday = {
     0: 'monday',
     1: 'tuesday',
@@ -39,8 +44,8 @@ aperture_time = {
                 2: week_aperture_time, 
                 3: week_aperture_time, 
                 4: week_aperture_time, 
-                5: '9:00',
-                6: '9:30', 
+                5: saturday_aperture_time,
+                6: sunday_aperture_time, 
 }
 time_closing = {
                 0: week_closing_time, 
@@ -48,8 +53,8 @@ time_closing = {
                 2: week_closing_time, 
                 3: week_closing_time, 
                 4: week_closing_time, 
-                5: '21:00',
-                6: '15:00', 
+                5: saturday_closing_time,
+                6: sunday_closing_time,
 }
 
 seasons = [

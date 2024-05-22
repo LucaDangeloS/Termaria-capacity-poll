@@ -28,7 +28,7 @@ def process_season_data(data):
 
     return data
 
-# @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
+@st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
 def reprocess_data(data, place):
     print('Reprocessing data')
     clean_data = remove_outliers(data, place)
@@ -61,7 +61,7 @@ def season_chart(data):  # sourcery skip: extract-duplicate-method
 
     options_year_1 = data.year.unique().tolist()[::-1]
 
-    selected_years = sorted(st.multiselect('Seleccionar años a comparar', options_year_1, default=options_year_1))
+    selected_years = sorted(st.multiselect('Seleccionar años para comparar', options_year_1, default=options_year_1, placeholder='Seleccionar años'))
 
     data = data[(data['year'].isin(selected_years))]
     data = data.assign(month = data['year_day'].dt.month)
@@ -92,7 +92,7 @@ def season_chart(data):  # sourcery skip: extract-duplicate-method
         xaxis={'categoryorder': 'array'},  # Use the specified order of the months
         barmode='group',
         title={
-            'text': f'Comparación de la media de {place} por mes entre en los años {selected_years}',
+            'text': f'Comparación de la media de {place} por estación por años',
             'x': 0.5,
             'xanchor': 'center'
         },

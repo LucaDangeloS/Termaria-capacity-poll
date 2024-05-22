@@ -3,10 +3,11 @@ import plotly.express as px
 from colorscheme import graph_colors
 from app_constants import spanish_weekday
 
-def process_weekly_data(data, fields = ['year'], rename=True):
+def process_weekly_data(data, fields = ['year']):
     weekly_data = data.groupby(['day'] + fields).mean(numeric_only=True).round(0).reset_index()
     weekly_data['sp_day'] = weekly_data['day'].map(spanish_weekday)
-    weekly_data['year_str'] = weekly_data['year'].astype(str)
+    if 'year' in fields:
+        weekly_data['year_str'] = weekly_data['year'].astype(str)
 
     return weekly_data
 

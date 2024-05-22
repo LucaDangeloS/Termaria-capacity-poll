@@ -7,7 +7,7 @@ import numpy as np # type: ignore
 import matplotlib.pyplot as plt # type: ignore
 import argparse as ap
 import datetime
-from app_constants import pandas_int_weekday
+from app_constants import PLACES_INDEXES, pandas_int_weekday, saturday_aperture_time, saturday_closing_time, sunday_aperture_time, sunday_closing_time
 
 DEFAULT_DIR = "aforo"
 DEFAULT_PLACE = "Gimnasio"
@@ -106,6 +106,33 @@ def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False):
                 data = read_csv(root, file)
                 total_data = pd.concat([total_data, data])
     return total_data
+
+def interpolate_missing_times(data):
+    # Previously the readings were taken every 30 minutes, now they are taken every 15 minutes
+    # This function interpolates the missing values so the data is consistent
+    # Times missing coincide with the ones ending in :15 and :45
+    try:
+        data = data.set_index('year_day')
+
+        # Resample DataFrame to include missing times
+        data = data.resample('15min').asfreq()
+        # interpolate to fill the missing values
+        numerical_columns = PLACES_INDEXES
+        data[numerical_columns] = data[numerical_columns].interpolate(method='time').round(0)
+        # fill non numeric columns with the previous value
+        data.bfill(inplace=True)
+        data['time'] = data.index.time
+        # Remove times before aperture_time and time_closing for each day
+        data = data.between_time('07:30', '22:30')
+        # for sunday and saturday remove times before 9:00 and 9:30 and after 21:00 and 15:00
+        data[data['day'].isin(['saturday'])] = data[data['day'].isin(['saturday'])].between_time(saturday_aperture_time, saturday_closing_time)
+        data[data['day'].isin(['sunday'])] = data[data['day'].isin(['sunday'])].between_time(sunday_aperture_time, sunday_closing_time)
+        data.reset_index(inplace=True)
+    except Exception as e:
+        pass
+    return data
+
+
 
 def record_histogram(o_data, week_day, place, y_ticks, append_name=""):
     data = o_data[o_data['day'] == week_day].groupby(['day','time'], as_index = False)

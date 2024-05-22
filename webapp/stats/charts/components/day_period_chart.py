@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.express as px
 from colorscheme import graph_colors
-from app_constants import spanish_weekday, months_spanish
+from app_constants import spanish_weekday
 
 def process_weekly_data(data, fields = ['year'], rename=True):
     weekly_data = data.groupby(['day'] + fields).mean(numeric_only=True).round(0).reset_index()
