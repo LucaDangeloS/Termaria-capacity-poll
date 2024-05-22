@@ -111,7 +111,7 @@ def record_histogram(o_data, week_day, place, y_ticks, append_name=""):
     data = o_data[o_data['day'] == week_day].groupby(['day','time'], as_index = False)
     idxs = np.round(np.linspace(0, len(data) - 1, X_TICKS)).astype(int)
 
-    mean_data = data.mean()
+    mean_data = data.mean(numeric_only=True)
     median_data = data.median()
 
     plt.bar(mean_data['time'], mean_data[place], color='b', width=0.9, label='Mean')
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     
     info_dataframe = data.groupby(['day','time'], as_index = False)
     jumps = 20
-    mean_max, median_max = (info_dataframe.mean()[place].max(), info_dataframe.median()[place].max())
+    mean_max, median_max = (info_dataframe.mean(numeric_only=True)[place].max(), info_dataframe.median()[place].max())
     y_ticks = np.arange(0, max(mean_max, median_max) + jumps, jumps)
 
     if day:

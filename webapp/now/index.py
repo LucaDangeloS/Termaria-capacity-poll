@@ -77,7 +77,7 @@ def now_stats_page(get_data, curr_week_start, curr_weekday_idx):
     @st.cache_data(ttl=datetime.timedelta(minutes=15), show_spinner=False)
     def add_mean_data(timeframe_data, current_data):
         ### MORE DATA PROCESSING ###
-        mean = remove_outliers(data[(data.year_day >= from_date) & (data.year_day < curr_week_start)], selected_place).groupby(['day', 'time']).mean().round(0)
+        mean = remove_outliers(data[(data.year_day >= from_date) & (data.year_day < curr_week_start)], selected_place).groupby(['day', 'time']).mean(numeric_only=True).round(0)
         mean = mean.reset_index().set_index('time')[PLACES_INDEXES]
         timeframe_data = timeframe_data.set_index('time')
         current_data = current_data.set_index('time')
