@@ -11,7 +11,7 @@ from stats.charts.components.weekly_chart import process_weekly_data, weekly_cha
 import pandas as pd # type: ignore
 import numpy as np
 import plotly.express as px
-from webapp.stats.charts.components.heatmap_chart import heatmap_chart
+from stats.charts.components.heatmap_chart import heatmap_chart
 # from streamlit_plotly_events import plotly_events
 
 def process_monthly_data(data):
