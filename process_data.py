@@ -132,7 +132,10 @@ def interpolate_missing_times(data):
         pass
     return data
 
-
+def trim_missing_times(data):
+    # Remove all readings ending with :15 and :45
+    data = data[~data['time'].apply(lambda x: x.minute in [15, 45])]
+    return data
 
 def record_histogram(o_data, week_day, place, y_ticks, append_name=""):
     data = o_data[o_data['day'] == week_day].groupby(['day','time'], as_index = False)
