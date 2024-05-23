@@ -33,11 +33,14 @@ def process_period_data(data):
 def process_hour_data(data):
     # formatted_data = interpolate_missing_times(data)
     formatted_data = trim_missing_times(data)
-    formatted_data = formatted_data.groupby(['day', 'time']).mean(numeric_only=True).round(0).reset_index()
-    formatted_data['sp_day'] = formatted_data['day'].map(spanish_weekday)
-    formatted_data['time'] = formatted_data['time'].astype(str) # Convert 'time' column to string format
-    formatted_data['time'] = pd.to_datetime(formatted_data['time']) # Convert 'time' column to datetime type
-    formatted_data['time'] = formatted_data['time'].dt.strftime('%H:%M')
+    try:
+        formatted_data = formatted_data.groupby(['day', 'time']).mean(numeric_only=True).round(0).reset_index()
+        formatted_data['sp_day'] = formatted_data['day'].map(spanish_weekday)
+        formatted_data['time'] = formatted_data['time'].astype(str) # Convert 'time' column to string format
+        formatted_data['time'] = pd.to_datetime(formatted_data['time']) # Convert 'time' column to datetime type
+        formatted_data['time'] = formatted_data['time'].dt.strftime('%H:%M')
+    except KeyError:
+        pass
     return formatted_data
 
 @st.cache_data(ttl=datetime.timedelta(minutes=180), show_spinner=False)
@@ -142,13 +145,15 @@ def temporal_comparison_chart(data):  # sourcery skip: extract-duplicate-method
     st.markdown("<p style='text-align: center;'> Selecciona una zona en la gráfica de barras de arriba para filtrar los datos de las gráficas de abajo</p>", unsafe_allow_html=True)
 
     ### HEATMAP ###
-    z_weekly = filtered_hour_data.pivot(index='sp_day', columns='time', values=place)
-    z_weekly.index = pd.Categorical(z_weekly.index, categories=spanish_weekday.values(), ordered=True)
-    z_weekly.sort_index(inplace=True)
-    # remove seconds from index time, datetime strip seconds
-    z_weekly.fillna(0, inplace=True)
-    heatmap_chart(z_weekly, title_override='Mapa de calor de ocupación media por hora y día de semana', xaxis_title='Hora', yaxis_title='Día de la semana', colorscale='plasma', tooltip_override='Día: %{y}<br>Hora: %{x}<br>Media de Personas: %{z}<extra></extra>')
-
+    try:
+        z_weekly = filtered_hour_data.pivot(index='sp_day', columns='time', values=place)
+        z_weekly.index = pd.Categorical(z_weekly.index, categories=spanish_weekday.values(), ordered=True)
+        z_weekly.sort_index(inplace=True)
+        # remove seconds from index time, datetime strip seconds
+        z_weekly.fillna(0, inplace=True)
+        heatmap_chart(z_weekly, title_override='Mapa de calor de ocupación media por hora y día de semana', xaxis_title='Hora', yaxis_title='Día de la semana', colorscale='plasma', tooltip_override='Día: %{y}<br>Hora: %{x}<br>Media de Personas: %{z}<extra></extra>')
+    except KeyError:
+        pass
     ### WEEKLY CHART ###
     weekly_chart(filtered_weekly_data, place, f'Comparación de la media de {place} por día de la semana entre en los años {(selected_years)}') 
 
