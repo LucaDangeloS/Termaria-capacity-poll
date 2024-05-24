@@ -48,6 +48,6 @@ def weekly_chart(data, place, title_override=None, color='year_str', color_label
             x=1
         ),
         clickmode='none',
-        dragmode='zoom',
+        dragmode='pan',
     )
     st.plotly_chart(weekly_chart, use_container_width=True)

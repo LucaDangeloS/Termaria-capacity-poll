@@ -120,13 +120,13 @@ def temporal_comparison_chart(data):  # sourcery skip: extract-duplicate-method
             x=1
         ),
         clickmode='event+select',
-        dragmode='select',  # Enable the cross to select areas
+        dragmode='pan',
         autosize=True,
     )
 
     # Do not allow zoom in any axis
-    months_chart.update_xaxes(fixedrange=True)
-    months_chart.update_yaxes(fixedrange=True)
+    # months_chart.update_xaxes(fixedrange=True)
+    # months_chart.update_yaxes(fixedrange=True)
 
     ### CROSSFILTERING ###
     selected_points = st.plotly_chart(months_chart, use_container_width=True, on_select="rerun")

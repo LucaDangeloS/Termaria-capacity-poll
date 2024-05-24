@@ -105,13 +105,13 @@ def season_chart(data):  # sourcery skip: extract-duplicate-method
             x=1
         ),
         clickmode='none',
-        dragmode='zoom',
+        dragmode='pan',
         autosize=True,
     )
 
     # Do not allow zoom in any axis
-    season_chart.update_xaxes(fixedrange=True)
-    season_chart.update_yaxes(fixedrange=True)
+    # season_chart.update_xaxes(fixedrange=True)
+    # season_chart.update_yaxes(fixedrange=True)
 
     st.plotly_chart(season_chart, use_container_width=True)
 

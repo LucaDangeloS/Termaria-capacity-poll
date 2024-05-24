@@ -47,7 +47,7 @@ def day_period_chart(data, place, title_override=None, x='year_str', x_label='AÃ
             x=1
         ),
         clickmode='none',
-        dragmode='zoom',
+        dragmode='pan',
         autosize=True,
     )
 

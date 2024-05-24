@@ -52,6 +52,7 @@ def __annual_chart(formatted_data, place, virtual_max, chart_max_toggle, chart_m
 
     ### Main chart
     if (chart_max_toggle and chart_mean_toggle):
+        # TODO: Convert to plotly
         chart = alt.Chart(formatted_data).mark_area(
                 opacity=0.9,
                 interpolate='step',
