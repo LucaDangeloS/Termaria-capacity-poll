@@ -105,6 +105,7 @@ def scan_dir(folder=".", start=0, end=-1, top=-1, reverse=False, verbose=False):
                 verbose and print(f"{root}{file}")
                 data = read_csv(root, file)
                 total_data = pd.concat([total_data, data])
+    total_data.reset_index(drop=True, inplace=True)
     return total_data
 
 def interpolate_missing_times(data):

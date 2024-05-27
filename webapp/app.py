@@ -1,6 +1,8 @@
+import sys
 from streamlit_option_menu import option_menu # type: ignore
 from process_data import scan_dir
 import streamlit as st # type: ignore
+import pandas as pd # type: ignore
 import datetime
 from now.index import now_stats_page
 from stats.index import historic_stats_data
@@ -13,20 +15,45 @@ st.set_page_config(page_title='Aforo de Termaria', layout='wide')
 curr_weekday_idx = datetime.datetime.now().weekday()
 curr_week_start = (datetime.datetime.now() - datetime.timedelta(days = curr_weekday_idx)).replace(hour=0, minute=0, second=0, microsecond=0)
 
-@st.cache_data(ttl=datetime.timedelta(minutes=60), show_spinner=False)
+@st.cache_data(ttl=datetime.timedelta(weeks=2), show_spinner=False)
+def initial_load():
+    # global data
+    return scan_dir("./aforo/", -1, -1, -1, reverse=False, verbose=True)
+
+@st.cache_data(ttl=datetime.timedelta(hours=24), show_spinner=False)
 def get_all_data(key = None):
     global data
-    data = scan_dir("./aforo/", -1, -1, -1, reverse=False)
+    current_timestamp = datetime.datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    print(f"{current_timestamp}: Reloading all data")
+    data = scan_dir("./aforo/", -1, -1, -1, reverse=False, verbose=True)
     return data
 
-@st.cache_data(ttl=datetime.timedelta(minutes=15), show_spinner=False)
+@st.cache_data(ttl=datetime.timedelta(milliseconds=2000), show_spinner=False)
 def get_partial_data(key = None, interval = 54):
     global data
-    data = scan_dir("./aforo/", -1, -1, interval, reverse=False)
+    # get the last week loaded in data
+    try:
+        dt_obj = datetime.datetime.now()
+        current_timestamp = dt_obj.strftime("%H:%M:%S %d/%m/%Y")
+        current_year = dt_obj.year
+        current_week = dt_obj.isocalendar()[1]
+        last_week = data[data['year'] == current_year]['week'].max()
+        prev_df_size = data.shape[0]
+        n_last_weeks = (current_week - last_week) + 1
+
+    except Exception as e:
+        print(e, file=sys.stderr)
+        return scan_dir("./aforo/", -1, -1, interval, reverse=False, verbose=True)
+
+    data = data.drop(data[(data['year'] == current_year) & (data['week'] == last_week)].index)
+    print(f"{current_timestamp}: Reloading last {n_last_weeks} weeks")
+    new_data = scan_dir("./aforo/", -1, -1, n_last_weeks, reverse=False, verbose=True)
+    data = pd.concat([data, new_data])
+    print(f"Dataframe increased {data.shape[0] - prev_df_size} rows.")
+
     return data
 
-# IDEAS: 
-# plot bar chart with error bars marking the 95% confidence interval for the periods
+data = initial_load()
 
 TABS = ['Ahora', 'Estadísticas']
 
