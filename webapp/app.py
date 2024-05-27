@@ -28,7 +28,7 @@ def get_all_data(key = None):
     data = scan_dir("./aforo/", -1, -1, -1, reverse=False, verbose=True)
     return data
 
-@st.cache_data(ttl=datetime.timedelta(milliseconds=2000), show_spinner=False)
+@st.cache_data(ttl=datetime.timedelta(minutes=5), show_spinner=False)
 def get_partial_data(key = None, interval = 54):
     global data
     # get the last week loaded in data
