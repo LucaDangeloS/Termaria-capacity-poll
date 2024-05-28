@@ -36,7 +36,7 @@ def get_partial_data(key = None, interval = -1):
         current_year = dt_obj.year
         assert current_year == (data['year'].max())
         current_week = dt_obj.isocalendar()[1]
-        last_week = data[data['year'] == current_year]['week'].max() - 1
+        last_week = data[data['year'] == current_year]['week'].max()
         prev_df_size = data.shape[0]
         n_last_weeks = (current_week - last_week) + 1
 
