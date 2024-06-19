@@ -32,6 +32,10 @@ def get_partial_data(key = None, interval = -1):
     global data
     # get the last week loaded in data
     try:
+        dt_obj = datetime.datetime.now()
+        curr_weekday_idx = dt_obj.weekday()
+        curr_week_start = (dt_obj - datetime.timedelta(days = curr_weekday_idx)).replace(hour=0, minute=0, second=0, microsecond=0)
+
         current_timestamp = dt_obj.strftime("%H:%M:%S %d/%m/%Y")
         current_year = dt_obj.year
         assert current_year == (data['year'].max())
