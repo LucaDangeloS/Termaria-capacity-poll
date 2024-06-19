@@ -21,10 +21,10 @@ def historic_stats_data(get_data):
 
     with st.sidebar:
         charts_options = {
-            'Gráfica anual': annual_chart,
             'Comparación temporal': temporal_comparison_chart,
+            'Gráfica anual': annual_chart,
             'Por estaciones': season_chart,
-            'Mapas de calor': heatmaps,
+            # 'Mapas de calor': heatmaps,
             'Tendencias': trends,
         }
 
