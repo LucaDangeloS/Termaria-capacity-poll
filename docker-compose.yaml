@@ -1,5 +1,6 @@
 services:
     app:
+        restart: unless-stopped
         build: ./
         command: streamlit run webapp/app.py --server.port 8501 --server.headless true
         volumes:
