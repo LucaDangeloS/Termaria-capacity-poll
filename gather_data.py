@@ -55,6 +55,9 @@ def gather_data(week_day, time):
         place: next(((d['Ocupacion'], d['Aforo'], d['Entradas'], d['Salidas']) for d in data if d['IdRecinto'] == placeId), None) 
     for place, placeId in places.items()
     }
+    # if any of the aforos is None, skip
+    if not all(aforos.values()):
+        return
     write_data(week_day, time, aforos)
 
 def write_data(week_day, time, aforos):
