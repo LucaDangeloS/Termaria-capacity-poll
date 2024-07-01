@@ -19,10 +19,14 @@ def heatmap_chart(data, title_override=None, xaxis_title=None, yaxis_title=None,
     ))
 
     heatmap.update_layout(
-        title=title_override or 'Heatmap de Ocupación del Gimnasio',
         xaxis_title=xaxis_title or 'Día',
         yaxis_title=yaxis_title or 'Día de la Semana',
         dragmode='pan',
+        title = {
+            'text': title_override or 'Heatmap de Ocupación del Gimnasio',
+            'x': 0.5,
+            'xanchor': 'center',
+        },
     )
 
     # Mostrar el heatmap en Streamlit
