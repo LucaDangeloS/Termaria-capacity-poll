@@ -1,11 +1,31 @@
 services:
     app:
+        image: termariavisualizer:latest
+        build: 
+            context: ./
+            dockerfile: ./webapp/Dockerfile
+        container_name: termaria-streamlit
         restart: unless-stopped
-        build: ./
-        command: streamlit run webapp/app.py --server.port 8501 --server.headless true
+        environment:
+            - TZ=Europe/Madrid
+            - UID=1000
+            - GID=1000
         volumes:
             - ./aforo:/app/aforo
-            
+        command: streamlit run webapp/app.py --server.port 8501 --server.headless true
         ports:
             - 8501:8501
-        image: termariavisualizer:latest
+    gatherer:
+        image: termariagatherer:latest
+        build: 
+            context: ./
+            dockerfile: ./gatherer/Dockerfile
+        container_name: termaria-gatherer
+        restart: unless-stopped
+        environment:
+            - TZ=Europe/Madrid
+            - UID=1000
+            - GID=1000
+        volumes:
+            - ./aforo:/app/aforo
+        command: python3 gather_data.py

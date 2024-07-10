@@ -4,7 +4,7 @@ import os
 import sys
 import pandas as pd # type: ignore
 import numpy as np # type: ignore
-import matplotlib.pyplot as plt # type: ignore
+# import matplotlib.pyplot as plt # type: ignore
 import argparse as ap
 import datetime
 from app_constants import PLACES_INDEXES, pandas_int_weekday, saturday_aperture_time, saturday_closing_time, sunday_aperture_time, sunday_closing_time
@@ -138,23 +138,23 @@ def trim_missing_times(data):
     data = data[~data['time'].apply(lambda x: x.minute in [15, 45])]
     return data
 
-def record_histogram(o_data, week_day, place, y_ticks, append_name=""):
-    data = o_data[o_data['day'] == week_day].groupby(['day','time'], as_index = False)
-    idxs = np.round(np.linspace(0, len(data) - 1, X_TICKS)).astype(int)
+# def record_histogram(o_data, week_day, place, y_ticks, append_name=""):
+#     data = o_data[o_data['day'] == week_day].groupby(['day','time'], as_index = False)
+#     idxs = np.round(np.linspace(0, len(data) - 1, X_TICKS)).astype(int)
 
-    mean_data = data.mean(numeric_only=True)
-    median_data = data.median()
+#     mean_data = data.mean(numeric_only=True)
+#     median_data = data.median()
 
-    plt.bar(mean_data['time'], mean_data[place], color='b', width=0.9, label='Mean')
-    plt.bar(median_data['time'], median_data[place], color='tab:orange', width=0.5, label='Median', alpha=0.7)
+#     plt.bar(mean_data['time'], mean_data[place], color='b', width=0.9, label='Mean')
+#     plt.bar(median_data['time'], median_data[place], color='tab:orange', width=0.5, label='Median', alpha=0.7)
 
-    plt.legend()
-    plt.xticks(mean_data.loc[idxs]['time'])
-    plt.yticks(y_ticks)
-    plt.title(f'{week_day.capitalize()} {place.capitalize()}')
-    plt.savefig(f'{STATS_DIR}/hist_{place}_{week_day}{append_name}.png')
-    plt.cla()
-    plt.clf()
+#     plt.legend()
+#     plt.xticks(mean_data.loc[idxs]['time'])
+#     plt.yticks(y_ticks)
+#     plt.title(f'{week_day.capitalize()} {place.capitalize()}')
+#     plt.savefig(f'{STATS_DIR}/hist_{place}_{week_day}{append_name}.png')
+#     plt.cla()
+#     plt.clf()
 
 if __name__ == '__main__':
     # Parse keyword program arguments

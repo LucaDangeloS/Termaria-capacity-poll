@@ -2,11 +2,13 @@ FROM python:3.8
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY webapp/requirements.txt requirements.txt
+RUN mkdir webapp
 COPY webapp ./webapp
+COPY .streamlit ./webapp/
 # copy wheel files
-COPY *.whl ./
-COPY *.py webapp/
+COPY webapp/*.whl .
+COPY *.py ./webapp/
 
 # Create /aforo folder
 RUN mkdir aforo

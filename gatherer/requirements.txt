@@ -1,0 +1,5 @@
+numpy
+pandas
+schedule
+beautifulsoup4
+requests

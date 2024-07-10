@@ -48,6 +48,7 @@ def get_week_n_year():
     return (year, week_num)
 
 def gather_data(week_day, time):
+    print(f"Getting data for {week_day} at {time}")
     data = get_request_data()
     # Sala fitness sport id: 15
     # dictionary with the key of places and value of data
@@ -67,10 +68,13 @@ def write_data(week_day, time, aforos):
         writer.writerow([week_day, time, aforos])
 
 if __name__ == '__main__':
+    accumulator = 0
     timestamps = {int_weekday[t]: [hour(x) for x in time_range(aperture_time[t], time_closing[t])] for t in int_weekday}
     for key in timestamps:
         for time in timestamps[key]:
             getattr(schedule.every(), key).at(time).do(gather_data, key, time)
+            accumulator += 1
+    print(f"Scheduled {accumulator} tasks")
 
     while True:
         schedule.run_pending()
