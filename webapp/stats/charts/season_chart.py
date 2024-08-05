@@ -11,6 +11,7 @@ import pandas as pd # type: ignore
 import numpy as np
 import plotly.express as px
 # from streamlit_plotly_events import plotly_events
+from stats.charts.components.place_selector import place_selector
 
 def process_season_data(data):
     data['month'] = data['month'].map(months_spanish)
@@ -48,14 +49,7 @@ def reprocess_data(data, place):
 
 def season_chart(data):  # sourcery skip: extract-duplicate-method
     with st.expander('Instalación', True):
-        place = option_menu(
-            menu_title = '',
-            menu_icon = '',
-            icons = ['none'] * 3,
-            orientation = 'horizontal',
-            options = PLACES_INDEXES[:-1],
-            default_index = 0,
-        )
+        place = place_selector()
 
     options_year_1 = data.year.unique().tolist()[::-1]
 

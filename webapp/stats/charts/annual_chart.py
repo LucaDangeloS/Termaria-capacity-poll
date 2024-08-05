@@ -7,6 +7,7 @@ import altair as alt # type: ignore
 from app_constants import pandas_int_weekday, PLACES_INDEXES
 import pandas as pd # type: ignore
 import numpy as np
+from stats.charts.components.place_selector import place_selector
 
 COMPARISON_COLUMNS = ['Máximo', 'Media', 'Personas', '']
 
@@ -219,14 +220,7 @@ def __annual_chart(formatted_data, place, virtual_max, chart_max_toggle, chart_m
 
 def annual_chart(data):
     with st.expander('Instalación', True):
-        place = option_menu(
-            menu_title = '',
-            menu_icon = '',
-            icons = ['none'] * 3,
-            orientation = 'horizontal',
-            options = PLACES_INDEXES[:-1],
-            default_index = 0,
-        )
+        place = place_selector()
 
     selector_options = [
         'Inicio de los tiempos',

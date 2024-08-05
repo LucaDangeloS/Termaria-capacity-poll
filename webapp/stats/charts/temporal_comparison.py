@@ -13,6 +13,7 @@ import numpy as np
 import plotly.express as px
 from stats.charts.components.heatmap_chart import heatmap_chart
 # from streamlit_plotly_events import plotly_events
+from stats.charts.components.place_selector import place_selector
 
 def process_monthly_data(data):
     month_data = data.groupby(['month', 'year']).mean(numeric_only=True).round(0).reset_index()
@@ -65,14 +66,7 @@ def reprocess_data(data, place):
 
 def temporal_comparison_chart(data):  # sourcery skip: extract-duplicate-method
     with st.expander('Instalación', True):
-        place = option_menu(
-            menu_title = '',
-            menu_icon = '',
-            icons = ['none'] * 3,
-            orientation = 'horizontal',
-            options = PLACES_INDEXES[:-1],
-            default_index = 0,
-        )
+        place = place_selector()
 
     options_year_1 = data.year.unique().tolist()[::-1]
 

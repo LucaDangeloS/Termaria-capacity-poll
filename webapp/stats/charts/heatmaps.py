@@ -9,6 +9,7 @@ from stats.charts.components.heatmap_chart import heatmap_chart
 from stats.charts.components.weekly_chart import process_weekly_data # type: ignore
 import plotly.graph_objects as go
 import pandas as pd
+from stats.charts.components.place_selector import place_selector
 
 
 def process_yearly_data(data):
@@ -55,14 +56,7 @@ def reprocess_data(data, place):
 
 def heatmaps(data):
     with st.expander('Instalación', True):
-        place = option_menu(
-            menu_title = '',
-            menu_icon = '',
-            icons = ['none'] * 3,
-            orientation = 'horizontal',
-            options = PLACES_INDEXES[:-1],
-            default_index = 0,
-        )
+        place = place_selector()
 
     options_year_1 = data.year.unique().tolist()[::-1]
     selected_year = sorted(st.multiselect('Seleccionar años', options_year_1, default=options_year_1, placeholder='Seleccionar años'))
